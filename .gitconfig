@@ -1,0 +1,9 @@
+[core]
+	editor = code --wait
+[merge]
+	tool = vscode
+[mergetool "vscode"]
+	cmd = code --wait $MERGED
+[user]
+	name = Adam Boritz
+#	email = 1315443+adamboritz@users.noreply.github.com
