@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+
+# From Dan Ryan's blog - http://danryan.co/using-antigen-for-zsh.html
+man () {
+  # Shows pretty `man` page.
+  env \
+    LESS_TERMCAP_mb=$(printf "\e[1;31m") \
+    LESS_TERMCAP_md=$(printf "\e[1;31m") \
+    LESS_TERMCAP_me=$(printf "\e[0m") \
+    LESS_TERMCAP_se=$(printf "\e[0m") \
+    LESS_TERMCAP_so=$(printf "\e[1;44;33m") \
+    LESS_TERMCAP_ue=$(printf "\e[0m") \
+    LESS_TERMCAP_us=$(printf "\e[1;32m") \
+      man "$@"
+}
+
+# Git: Determine current branch
+function git_branch_name() {
+  git rev-parse --abbrev-ref HEAD
+}
+
+# Git: Clean current branch after it's been merged
+function git_prune() {
+  active_branch=$(git_branch_name)
+  development_exists=$(git rev-parse --verify --quiet development)
+  main_exists=$(git rev-parse --verify --quiet main)
+  staging_exists=$(git rev-parse --verify --quiet staging)
+
+  if [[ $active_branch == "development" ]] || [[ $active_branch == "main" ]] || [[ $active_branch == "master" ]] || [[ $active_branch == "staging" ]]; then
+    echo "Cannot prune $active_branch"
+    return 1
+  fi
+
+  force=false
+  trunk="master"
+
+  if [[ $development_exists ]]; then
+    trunk="development"
+  elif [[ $main_exists ]]; then
+    trunk="main"
+  elif [[ $staging_exists ]]; then
+    trunk="staging"
+  fi
+
+  for i in "$@" ; do
+    case "$i" in
+      ( -f | --force ) force=true; shift;;
+      ( * ) trunk=$1; shift;;
+    esac
+  done
+
+  if [[ $force == true ]]; then
+    delete_flag="D"
+  else
+    delete_flag="d"
+  fi
+
+  if [[ $active_branch == "$trunk" ]]; then
+    echo "Cannot prune into self"
+    return 1
+  fi
+
+  git stash && git checkout "$trunk" && git pull origin "$trunk" && git branch -${delete_flag} "$active_branch" && git fetch --prune
+}
