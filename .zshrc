@@ -4,7 +4,7 @@
 # Load the shell dotfiles, and then some:
 # * ~/.path can be used to extend `$PATH`.
 # * ~/.extra can be used for other settings you don’t want to commit.
-for file in ~/.{exports,functions,inputrc}; do
+for file in ~/.{exports,functions}; do
 	[ -r "$file" ] && [ -f "$file" ] && source "$file";
 done;
 unset file;
@@ -78,6 +78,22 @@ HIST_STAMPS="yyyy-mm-dd"
 plugins=(
   git
 )
+
+# List all matches in case multiple possible completions are possible
+set show-all-if-ambiguous on
+
+# Immediately add a trailing slash when autocompleting symlinks to directories
+set mark-symlinked-directories on
+
+# Use the text that has already been typed as the prefix for searching through
+# commands (i.e. more intelligent Up/Down behavior)
+bindkey "\e[B": history-search-forward
+bindkey "\e[A": history-search-backward
+
+# Allow UTF-8 input and output, instead of showing stuff like $'\0123\0456'
+set input-meta on
+set output-meta on
+set convert-meta off
 
 source $ZSH/oh-my-zsh.sh
 
