@@ -90,6 +90,10 @@ set mark-symlinked-directories on
 bindkey "\e[B": history-search-forward
 bindkey "\e[A": history-search-backward
 
+# Navigate by words
+bindkey "^[[1;3C" forward-word
+bindkey "^[[1;3D" backward-word
+
 # Allow UTF-8 input and output, instead of showing stuff like $'\0123\0456'
 set input-meta on
 set output-meta on
