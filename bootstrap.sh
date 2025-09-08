@@ -10,6 +10,7 @@ function syncFiles() {
     --exclude ".DS_Store"\
     --exclude "bootstrap.sh" \
     --exclude "README.md" \
+    --exclude ".work_exports" \
     -avh --no-perms . ~;
   source ~/.zshrc
 }
